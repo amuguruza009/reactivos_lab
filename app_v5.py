@@ -64,23 +64,46 @@ with tab2:
 
     texto2 = st.text_input("🔎 Buscar para ver ficha", key="busqueda_tab2")
 
-    if texto2:
-        texto_norm2 = normalizar(texto2)
-        resultados = df[df["Sustancia_norm"].str.contains(texto_norm2, na=False)]
+if texto2:
+    texto_norm2 = normalizar(texto2)
+    resultados = df[df["Sustancia_norm"].str.contains(texto_norm2, na=False)]
 
-        if len(resultados) > 0:
-            ficha = resultados.iloc[0]
+    if len(resultados) > 0:
+        ficha = resultados.iloc[0]
 
-            st.subheader(f"🧪 {ficha['Sustancia']}")
+        st.markdown(f"## {ficha['Sustancia']}")
 
-            col1, col2 = st.columns(2)
+        # Código más grande
+        st.markdown(f"""
+        <h2 style='font-size:26px; color:#333;'>
+        {ficha['Codigo']}
+        </h2>
+        """, unsafe_allow_html=True)
 
-            with col1:
-                for col in df.columns:
-                    if col not in ["Sustancia", "Sustancia_norm"]:
-                        st.write(f"**{col}**: {ficha[col]}")
+        col1, col2 = st.columns(2)
 
-        else:
-            st.warning("No encontrado")
+        with col1:
+            grupo = ficha.get("Grupo", "-")
+            subgrupo = ficha.get("Subgrupo", "-")
+
+            if pd.isna(grupo) or grupo == "":
+                grupo = "-"
+
+            if pd.isna(subgrupo) or subgrupo == "":
+                subgrupo = "-"
+
+            st.markdown(f"**📁 Grupo:** {grupo}")
+            st.markdown(f"**📂 Subgrupo:** {subgrupo}")
+
+        with col2:
+            for col in df.columns:
+                if col not in ["Sustancia", "Sustancia_norm", "Codigo", "Grupo", "Subgrupo"]:
+                    valor = ficha[col]
+
+                    if pd.isna(valor) or valor == "":
+                        valor = "-"
+
+                    st.markdown(f"**{col}:** {valor}")
+
     else:
-        st.info("Escribe un reactivo para ver su ficha")
+        st.warning("No encontrado")
