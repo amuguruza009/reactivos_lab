@@ -16,29 +16,30 @@ def normalizar(texto):
     return "".join(c for c in texto if not unicodedata.combining(c))
 
 # =====================
-# CARGA DATOS
+# CARGA DE DATOS
 # =====================
 @st.cache_data
-def cargar():
+def cargar_datos():
     df = pd.read_excel("reactivos_lab.xlsx", engine="openpyxl")
     df["Sustancia_norm"] = df["Sustancia"].apply(normalizar)
     return df
 
-df = cargar()
+df = cargar_datos()
 
 # =====================
 # TABS
 # =====================
-tab1, tab2 = st.tabs(["📋 Inventario", "🧬 Fichas de reactivo"])
+tab1, tab2 = st.tabs(["📋 Inventario", "🧬 Ficha del reactivo"])
 
 # ==========================================================
-# TAB 1 → INVENTARIO (tabla + búsqueda)
+# TAB 1: INVENTARIO
 # ==========================================================
 with tab1:
-    st.title("📋 Inventario de reactivos")
+    st.title("📋 Inventario de Reactivos")
 
     texto = st.text_input("🔎 Buscar reactivo", key="busqueda_tab1")
 
+    # Filtrado
     if texto:
         texto_norm = normalizar(texto)
         df_filtrado = df[df["Sustancia_norm"].str.contains(texto_norm, na=False)]
@@ -57,81 +58,60 @@ with tab1:
     )
 
 # ==========================================================
-# TAB 2 → FICHAS (buscador + detalle)
+# TAB 2: FICHA
 # ==========================================================
 with tab2:
     st.title("🧬 Ficha del reactivo")
 
     texto2 = st.text_input("🔎 Buscar para ver ficha", key="busqueda_tab2")
 
-if texto2:
-    texto_norm2 = normalizar(texto2)
-    resultados = df[df["Sustancia_norm"].str.contains(texto_norm2, na=False)]
+    if texto2:
+        texto_norm2 = normalizar(texto2)
+        resultados = df[df["Sustancia_norm"].str.contains(texto_norm2, na=False)]
 
-    if len(resultados) > 0:
-        ficha = resultados.iloc[0]
+        if len(resultados) > 0:
+            ficha = resultados.iloc[0]
 
-        # =====================
-        # TÍTULO
-        # =====================
-        st.markdown(f"## {ficha['Sustancia']}")
+            # =====================
+            # TÍTULO
+            # =====================
+            st.markdown(f"## {ficha['Sustancia']}")
 
-        if texto2:
-    texto_norm2 = normalizar(texto2)
-    resultados = df[df["Sustancia_norm"].str.contains(texto_norm2, na=False)]
+            # =====================
+            # CÓDIGO ALINEADO
+            # =====================
+            codigo = ficha.get("Codigo", "-")
+            if pd.isna(codigo) or codigo == "":
+                codigo = "-"
 
-    if len(resultados) > 0:
-        ficha = resultados.iloc[0]
+            col1, col2 = st.columns([1, 3], vertical_alignment="center")
 
-        # =====================
-        # TÍTULO
-        # =====================
-        st.markdown(f"## {ficha['Sustancia']}")
+            with col1:
+                st.markdown("**Código**")
 
-        # =====================
-        # CÓDIGO ALINEADO BONITO
-        # =====================
-        codigo = ficha.get("Codigo", "-")
+            with col2:
+                st.markdown(
+                    f"<div style='font-size:28px; line-height:1.2;'>{codigo}</div>",
+                    unsafe_allow_html=True
+                )
 
-        if pd.isna(codigo) or codigo == "":
-            codigo = "-"
+            st.divider()
 
-        col1, col2 = st.columns([1, 2], vertical_alignment="center")
+            # =====================
+            # RESTO DE CAMPOS
+            # =====================
+            for col in df.columns:
+                if col not in ["Sustancia", "Sustancia_norm", "Codigo"]:
 
-        with col1:
-            st.markdown("**Código**")
+                    valor = ficha[col]
 
-        with col2:
-            st.markdown(
-                f"<div style='font-size:28px; line-height:1.2; padding-top:2px;'>{codigo}</div>",
-                unsafe_allow_html=True
-            )
+                    if pd.isna(valor) or valor == "":
+                        valor = "-"
 
+                    st.markdown(f"**{col}:** {valor}")
 
-        # =====================
-        # RESTO DE CAMPOS (NEGRITAS BIEN HECHAS)
-        # =====================
-        for col in df.columns:
-            if col not in ["Sustancia", "Sustancia_norm", "Codigo"]:
+        else:
+            st.warning("No encontrado")
 
-                valor = ficha[col]
-
-                if pd.isna(valor) or valor == "":
-                    valor = "-"
-
-                # 👇 ESTA ES LA FORMA QUE NO FALLA EN STREAMLIT
-                st.markdown(f"**{col}:** {valor}")
-
-        # =====================
-        # RESTO DE CAMPOS (NEGRITAS BIEN HECHAS)
-        # =====================
-        for col in df.columns:
-            if col not in ["Sustancia", "Sustancia_norm", "Codigo"]:
-
-                valor = ficha[col]
-
-                if pd.isna(valor) or valor == "":
-                    valor = "-"
-
-                # 👇 ESTA ES LA FORMA QUE NO FALLA EN STREAMLIT
-                st.markdown(f"**{col}:** {valor}")
+    else:
+        st.info("Escribe un reactivo para ver su ficha")
