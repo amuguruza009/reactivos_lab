@@ -18,7 +18,7 @@ def normalizar(texto):
 # =====================
 # CARGA DE DATOS
 # =====================
-@st.cache_data
+@st.cache_data(ttl=10)
 def cargar_datos():
     df = pd.read_excel("reactivos_lab.xlsx", engine="openpyxl")
     df["Sustancia_norm"] = df["Sustancia"].apply(normalizar)
@@ -27,9 +27,9 @@ def cargar_datos():
 df = cargar_datos()
 
 # BOTÓN DE ACTUALIZAR DATOS
-if st.button("🔄 Recargar datos"):
-    st.cache_data.clear()
-    st.rerun()
+#if st.button("🔄 Recargar datos"):
+#    st.cache_data.clear()
+#    st.rerun()
     
 # =====================
 # TABS
