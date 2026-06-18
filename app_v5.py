@@ -76,22 +76,51 @@ if texto2:
         # =====================
         st.markdown(f"## {ficha['Sustancia']}")
 
+        if texto2:
+    texto_norm2 = normalizar(texto2)
+    resultados = df[df["Sustancia_norm"].str.contains(texto_norm2, na=False)]
+
+    if len(resultados) > 0:
+        ficha = resultados.iloc[0]
+
         # =====================
-        # CÓDIGO AL LADO DEL TÍTULO
+        # TÍTULO
+        # =====================
+        st.markdown(f"## {ficha['Sustancia']}")
+
+        # =====================
+        # CÓDIGO ALINEADO BONITO
         # =====================
         codigo = ficha.get("Codigo", "-")
+
         if pd.isna(codigo) or codigo == "":
             codigo = "-"
 
-        col1, col2 = st.columns([1, 3])
+        col1, col2 = st.columns([1, 2], vertical_alignment="center")
 
         with col1:
-            st.markdown("**Código:**")
+            st.markdown("**Código**")
 
         with col2:
-            st.markdown(f"### {codigo}")
+            st.markdown(
+                f"<div style='font-size:28px; line-height:1.2; padding-top:2px;'>{codigo}</div>",
+                unsafe_allow_html=True
+            )
 
-        st.divider()
+
+        # =====================
+        # RESTO DE CAMPOS (NEGRITAS BIEN HECHAS)
+        # =====================
+        for col in df.columns:
+            if col not in ["Sustancia", "Sustancia_norm", "Codigo"]:
+
+                valor = ficha[col]
+
+                if pd.isna(valor) or valor == "":
+                    valor = "-"
+
+                # 👇 ESTA ES LA FORMA QUE NO FALLA EN STREAMLIT
+                st.markdown(f"**{col}:** {valor}")
 
         # =====================
         # RESTO DE CAMPOS (NEGRITAS BIEN HECHAS)
