@@ -118,21 +118,21 @@ with tab2:
         # =====================================
         with col_img:
 
-        st.subheader("📍 Ubicación")
+            st.subheader("📍 Ubicación")
 
-        grupo = str(ficha["Grupo"]).strip()
+            grupo = str(ficha["Grupo"]).strip()
 
-        if grupo in imagenes_grupo:
+            if grupo in imagenes_grupo:
 
-            st.image(
-                imagenes_grupo[grupo],
-                caption=f"Grupo {grupo}",
-                use_container_width=True
-            )
+                st.image(
+                    imagenes_grupo[grupo],
+                    caption=f"Grupo {grupo}",
+                    use_container_width=True
+                )
 
-        else:
+            else:
 
-            st.warning("No existe una imagen para este grupo.")
+                st.warning("No existe una imagen para este grupo.")
 
     else:
         st.info("Escribe un reactivo para ver su ficha")
