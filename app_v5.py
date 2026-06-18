@@ -71,39 +71,29 @@ if texto2:
     if len(resultados) > 0:
         ficha = resultados.iloc[0]
 
+        # Título principal
         st.markdown(f"## {ficha['Sustancia']}")
 
-        # Código más grande
-        st.markdown(f"""
-        <h2 style='font-size:26px; color:#333;'>
-        {ficha['Codigo']}
-        </h2>
-        """, unsafe_allow_html=True)
+        # Código (más grande + etiqueta corregida)
+        codigo = ficha.get("Codigo", "-")
+        if pd.isna(codigo) or codigo == "":
+            codigo = "-"
 
-        col1, col2 = st.columns(2)
+        st.markdown(f"**Código:**")
+        st.markdown(f"<h3>{codigo}</h3>", unsafe_allow_html=True)
 
-        with col1:
-            grupo = ficha.get("Grupo", "-")
-            subgrupo = ficha.get("Subgrupo", "-")
+        # Resto de campos en una sola columna
+        st.markdown("### Información")
 
-            if pd.isna(grupo) or grupo == "":
-                grupo = "-"
+        for col in df.columns:
+            if col not in ["Sustancia", "Sustancia_norm", "Codigo"]:
 
-            if pd.isna(subgrupo) or subgrupo == "":
-                subgrupo = "-"
+                valor = ficha[col]
 
-            st.markdown(f"**📁 Grupo:** {grupo}")
-            st.markdown(f"**📂 Subgrupo:** {subgrupo}")
+                if pd.isna(valor) or valor == "":
+                    valor = "-"
 
-        with col2:
-            for col in df.columns:
-                if col not in ["Sustancia", "Sustancia_norm", "Codigo", "Grupo", "Subgrupo"]:
-                    valor = ficha[col]
-
-                    if pd.isna(valor) or valor == "":
-                        valor = "-"
-
-                    st.markdown(f"**{col}:** {valor}")
+                st.markdown(f"**{col}:** {valor}")
 
     else:
         st.warning("No encontrado")
