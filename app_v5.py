@@ -26,6 +26,11 @@ def cargar_datos():
 
 df = cargar_datos()
 
+# BOTÓN DE ACTUALIZAR DATOS
+if st.button("🔄 Recargar datos"):
+    st.cache_data.clear()
+    st.rerun()
+    
 # =====================
 # TABS
 # =====================
