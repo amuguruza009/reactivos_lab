@@ -113,5 +113,26 @@ with tab2:
         else:
             st.warning("No encontrado")
 
+        # =====================================
+        # COLUMNA DERECHA: FOTO DE LA BALDA
+        # =====================================
+        with col_img:
+
+        st.subheader("📍 Ubicación")
+
+        grupo = str(ficha["Grupo"]).strip()
+
+        if grupo in imagenes_grupo:
+
+            st.image(
+                imagenes_grupo[grupo],
+                caption=f"Grupo {grupo}",
+                use_container_width=True
+            )
+
+        else:
+
+            st.warning("No existe una imagen para este grupo.")
+
     else:
         st.info("Escribe un reactivo para ver su ficha")
