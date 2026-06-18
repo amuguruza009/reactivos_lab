@@ -106,21 +106,32 @@ with tab2:
 
             with col_img:
 
+                st.subheader("📍 Ubicación")
+
+                # Leer grupo y subgrupo
                 grupo = str(ficha["Grupo"]).strip()
 
-                # Extraer solo el código del grupo
-                if "." in grupo:
-                    grupo_codigo = grupo.split(".")[0].strip()
-                else:
-                    grupo_codigo = grupo
+                subgrupo = ficha["Subgrupo"]
 
-                ruta = imagenes_grupo.get(grupo_codigo)
+                if pd.isna(subgrupo):
+                    subgrupo = ""
+                else:
+                    subgrupo = str(subgrupo).strip()
+
+                # Obtener el código del grupo
+                if grupo.startswith("7") and subgrupo != "":
+                    codigo = subgrupo.split(".")[0].strip().upper()
+                else:
+                    codigo = grupo.split(".")[0].strip().upper()
+
+                # Buscar la imagen
+                ruta = imagenes_grupo.get(codigo)
 
                 if ruta and os.path.exists(ruta):
 
                     st.image(
                         ruta,
-                        caption=f"Grupo {grupo_codigo}",
+                        caption=f"Grupo {codigo}",
                         use_container_width=True
                     )
 
@@ -130,13 +141,10 @@ with tab2:
 
                 else:
 
-                    st.warning(f"No hay imagen asociada al grupo {grupo}")
-
-        else:
-
-            st.warning("No se ha encontrado ningún reactivo.")
+                    st.warning(f"No hay imagen asociada al grupo {codigo}")
 
     else:
 
         st.info("Escribe un reactivo para ver su ficha.")
+
 
