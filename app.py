@@ -3,7 +3,7 @@ import pandas as pd
 import unicodedata
 
 # --- Cargar datos ---
-ruta = reactivos_lab.xlsx
+ruta = "reactivos_lab.xlsx"
 df = pd.read_excel(ruta)
 
 # --- normalización ---
