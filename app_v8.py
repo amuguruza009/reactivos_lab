@@ -106,22 +106,21 @@ with tab2:
 
             with col_img:
 
-                st.subheader("📍 Ubicación")
+                grupo = str(ficha["Grupo"]).strip()
 
-                grupo = ficha["Grupo"]
+                # Extraer solo el código del grupo
+                if "." in grupo:
+                    grupo_codigo = grupo.split(".")[0].strip()
+                else:
+                    grupo_codigo = grupo
 
-                try:
-                    grupo = str(int(float(grupo)))
-                except:
-                    grupo = str(grupo).strip()
-
-                ruta = imagenes_grupo.get(grupo)
+                ruta = imagenes_grupo.get(grupo_codigo)
 
                 if ruta and os.path.exists(ruta):
 
                     st.image(
                         ruta,
-                        caption=f"Grupo {grupo}",
+                        caption=f"Grupo {grupo_codigo}",
                         use_container_width=True
                     )
 
@@ -140,5 +139,4 @@ with tab2:
     else:
 
         st.info("Escribe un reactivo para ver su ficha.")
-
 
