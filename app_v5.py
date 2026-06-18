@@ -71,20 +71,31 @@ if texto2:
     if len(resultados) > 0:
         ficha = resultados.iloc[0]
 
-        # Título principal
+        # =====================
+        # TÍTULO
+        # =====================
         st.markdown(f"## {ficha['Sustancia']}")
 
-        # Código (más grande + etiqueta corregida)
+        # =====================
+        # CÓDIGO AL LADO DEL TÍTULO
+        # =====================
         codigo = ficha.get("Codigo", "-")
         if pd.isna(codigo) or codigo == "":
             codigo = "-"
 
-        st.markdown(f"**Código:**")
-        st.markdown(f"<h3>{codigo}</h3>", unsafe_allow_html=True)
+        col1, col2 = st.columns([1, 3])
 
-        # Resto de campos en una sola columna
-        st.markdown("### Información")
+        with col1:
+            st.markdown("**Código:**")
 
+        with col2:
+            st.markdown(f"### {codigo}")
+
+        st.divider()
+
+        # =====================
+        # RESTO DE CAMPOS (NEGRITAS BIEN HECHAS)
+        # =====================
         for col in df.columns:
             if col not in ["Sustancia", "Sustancia_norm", "Codigo"]:
 
@@ -93,7 +104,5 @@ if texto2:
                 if pd.isna(valor) or valor == "":
                     valor = "-"
 
+                # 👇 ESTA ES LA FORMA QUE NO FALLA EN STREAMLIT
                 st.markdown(f"**{col}:** {valor}")
-
-    else:
-        st.warning("No encontrado")
